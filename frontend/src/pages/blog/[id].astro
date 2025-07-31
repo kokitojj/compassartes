@@ -1,0 +1,91 @@
+---
+import MainLayout from '../../layouts/Layout.astro';
+
+interface Post {
+  id: number;
+  titulo: string;
+  contenido: string;
+  fecha_publicacion: string;
+  full_name: string; // Nombre del artista
+  artista_id: number;
+}
+
+interface PostData {
+  post: Post;
+}
+
+async function getPostData(
+  id: string | undefined
+): Promise<{ data: PostData | null; error: string | null }> {
+  try {
+    const apiUrl = import.meta.env.INTERNAL_API_URL || 'http://backend:3007';
+    if (!apiUrl) {
+      throw new Error(
+        'La variable de entorno INTERNAL_API_URL no está definida.'
+      );
+    }
+
+    const response = await fetch(`${apiUrl}/api/blog/${id}`);
+    if (!response.ok) {
+      throw new Error(
+        `Error al obtener los datos del post: ${response.statusText}`
+      );
+    }
+    const data = await response.json();
+    return { data: { post: data }, error: null }; // Envuelve el post en un objeto con la clave 'post'
+  } catch (e: any) {
+    console.error('Fallo al obtener los datos del post:', e);
+    return { data: null, error: e.message };
+  }
+}
+
+const { id } = Astro.params;
+const { data, error } = await getPostData(id);
+
+const post = data?.post;
+
+---
+
+<MainLayout title={post ? post.titulo : 'Post no encontrado'}>
+  <div class="container mx-auto px-6 py-16">
+    {
+      error && (
+        <div class="text-center py-10 bg-red-900/50 border border-red-500 text-red-300 px-4 rounded-lg">
+          <h1 class="text-3xl font-bold mb-4">Error al Cargar el Post</h1>
+          <p class="font-mono bg-gray-900 p-4 rounded">{error}</p>
+        </div>
+      )
+    }
+
+    {
+      !error && post && (
+        <>
+          {/* --- Cabecera del Post --- */}
+          <div class="bg-secondary p-8 rounded-xl shadow-lg border border-gray-700 mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4">
+              {post.titulo}
+            </h1>
+            <p class="text-lg text-gray-400 mb-4">
+              Publicado el <time datetime={post.fecha_publicacion}>
+                {new Date(post.fecha_publicacion).toLocaleDateString(
+                  'es-ES',
+                  { year: 'numeric', month: 'long', day: 'numeric' }
+                )}
+              </time> por <a href={`/artistas/${post.artista_id}`} class="hover:underline">{post.full_name}</a>
+            </p>
+          </div>
+
+          {/* --- Contenido del Post --- */}
+          <div class="bg-secondary p-8 rounded-xl shadow-lg border border-gray-700">
+            <h2 class="text-3xl font-bold text-white mb-4 border-l-4 border-green-500 pl-4">
+              Contenido
+            </h2>
+            <p class="text-gray-300 leading-relaxed whitespace-pre-wrap">
+              {post.contenido || 'Este post no tiene contenido.'}
+            </p>
+          </div>
+        </>
+      )
+    }
+  </div>
+</MainLayout>

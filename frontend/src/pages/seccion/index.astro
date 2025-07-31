@@ -1,0 +1,43 @@
+---
+import MainLayout from '../../layouts/Layout.astro';
+
+// Obtenemos la lista de secciones desde nuestro backend
+const response = await fetch('http://backend:3007/api/public/secciones');
+const grupos = await response.json();
+---
+
+<MainLayout title="Secciones y Colectivos - angelbfisio">
+  <div class="container mx-auto px-6 py-16">
+    <h1 class="text-5xl font-extrabold text-white text-center mb-4">
+      Secciones
+    </h1>
+    <p class="text-xl text-gray-300 text-center max-w-2xl mx-auto mb-12">
+      Explora....
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {
+        grupos.map((grupo) => (
+          <a
+            href={`/seccion/${grupo.id}`}
+            class="block bg-gray-800 rounded-xl border border-gray-700 hover:border-primary-500 hover:bg-gray-700 transition-all duration-300 group"
+          >
+            <img
+              src={grupo.imagen_url}
+              alt={`Imagen de ${grupo.nombre_seccion}`}
+              class="w-full h-48 object-cover rounded-t-xl"
+            />
+            <div class="p-6">
+              <h3 class="text-2xl font-bold text-white group-hover:text-primary-400 transition-colors">
+                {grupo.nombre_seccion}
+              </h3>
+              <p class="text-sm text-gray-400 mt-2 line-clamp-3">
+                {grupo.descripcion}
+              </p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</MainLayout>

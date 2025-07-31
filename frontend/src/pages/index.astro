@@ -1,0 +1,169 @@
+---
+// src/pages/index.astro
+import Layout from '../layouts/Layout.astro';
+import ArtGallery from '../components/ArtGallery.jsx';
+
+// --- Definición de Tipos para TypeScript ---
+interface Post {
+  id: number;
+  titulo: string;
+  contenido: string;
+  fecha_publicacion: string;
+  full_name: string; // Nombre del artista
+}
+
+interface Artwork {
+  id: number;
+  titulo: string;
+  imagen_url: string;
+  artista_nombre: string;
+}
+
+// --- Función para obtener las obras destacadas ---
+async function getFeaturedArtworks(): Promise<{
+  artworks: Artwork[];
+  error: string | null;
+}> {
+  try {
+    const apiUrl = import.meta.env.INTERNAL_API_URL || 'http://backend:3007';
+    const response = await fetch(`${apiUrl}/api/public/obras/destacadas`);
+    if (!response.ok) {
+      throw new Error(`Error al obtener las obras destacadas: ${response.statusText}`);
+    }
+    const artworks = await response.json();
+    return { artworks, error: null };
+  } catch (e: any) {
+    console.error('Fallo al obtener los datos de las obras destacadas:', e);
+    return { artworks: [], error: e.message };
+  }
+}
+
+// --- Función para obtener los últimos 10 posts ---
+async function getLatestPosts(): Promise<{
+  posts: Post[];
+  error: string | null;
+}> {
+  try {
+    const apiUrl = import.meta.env.INTERNAL_API_URL || 'http://backend:3007';
+    console.log('[getLatestPosts] API URL (SSR):', apiUrl); // <-- LOG AÑADIDO
+    if (!apiUrl) {
+      throw new Error(
+        'La variable de entorno INTERNAL_API_URL no está definida.'
+      );
+    }
+
+    const fetchUrl = `${apiUrl}/api/public/posts/latest`;
+    console.log('[getLatestPosts] Fetching from (SSR):', fetchUrl); // <-- LOG AÑADIDO
+    const response = await fetch(fetchUrl);
+
+    if (!response.ok) {
+      console.error(
+        '[getLatestPosts] Error response (SSR):',
+        response.status,
+        response.statusText
+      ); // <-- LOG AÑADIDO
+      throw new Error(`Error al obtener los posts: ${response.statusText}`);
+    }
+    const posts = await response.json();
+    console.log('[getLatestPosts] Posts fetched (SSR):', posts.length); // <-- LOG AÑADIDO
+    return { posts, error: null };
+  } catch (e: any) {
+    console.error('Fallo al obtener los datos de los posts (SSR):', e); // <-- LOG AÑADIDO
+    return { posts: [], error: e.message };
+  }
+}
+
+const { posts, error: postsError } = await getLatestPosts();
+const { artworks, error: artworksError } = await getFeaturedArtworks();
+---
+
+<Layout title="angelbfisio - Secciones del estado español">
+  <div class="flex flex-col min-h-screen">
+    <main class="flex-grow">
+      <!-- Hero Section -->
+      <section class="hero-gradient text-white py-24 px-6">
+        <div class="container mx-auto text-center">
+          <h2 class="text-5xl font-extrabold mb-4 leading-tight">
+            Angel Bravo
+          </h2>
+
+          <p>Fisioterapia y más</p>
+          <!-- <a href="#services" class="cta-button">Descubre Cómo</a> -->
+        </div>
+      </section>
+
+      <!-- Gallery Section -->
+      <section id="gallery" class="py-16">
+        <div class="container mx-auto px-6">
+          <h2 class="text-4xl font-bold text-center text-white mb-12">
+            Destacados
+          </h2>
+
+          <ArtGallery client:load artworks={artworks} />
+        </div>
+      </section>
+
+      <!-- Latest Posts Section -->
+      <section id="latest-posts" class="py-16 bg-gray-900">
+        <div class="container mx-auto px-6">
+          <h2 class="text-4xl font-bold text-center text-white mb-12">
+            Últimos Posts
+          </h2>
+
+          {
+            postsError && (
+              <div class="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded-lg text-center mb-8">
+                <p>
+                  <strong>Error:</strong> No se pudieron cargar las últimas
+                  entradas del blog.
+                </p>
+              </div>
+            )
+          }
+
+          {
+            posts.length > 0 ? (
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {posts.map((post) => (
+                  <article class="bg-mediumblue rounded-xl shadow-lg overflow-hidden card-hover-effect flex flex-col h-full border border-gray-700">
+                    <div class="p-6 flex-grow flex flex-col">
+                      <p class="text-sm text-gray-400 mb-2">
+                        <time datetime={post.fecha_publicacion}>
+                          {new Date(post.fecha_publicacion).toLocaleDateString(
+                            'es-ES',
+                            { year: 'numeric', month: 'long', day: 'numeric' }
+                          )}
+                        </time>
+                        <span class="mx-2">&middot;</span>
+                        <span>por {post.full_name}</span>
+                      </p>
+                      <h3 class="text-xl font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
+                        <a href={`/blog/${post.id}`} class="hover:underline">
+                          {post.titulo}
+                        </a>
+                      </h3>
+                      <p class="text-gray-400 text-sm line-clamp-3 flex-grow">
+                        {post.contenido}
+                      </p>
+                      <div class="mt-4 text-primary-400 font-semibold group-hover:underline">
+                        <a href={`/blog/${post.id}`}>Leer más &rarr;</a>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              !postsError && (
+                <p class="text-center text-gray-400">
+                  No hay entradas de blog recientes por el momento.
+                </p>
+              )
+            )
+          }
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+  </div>
+</Layout>

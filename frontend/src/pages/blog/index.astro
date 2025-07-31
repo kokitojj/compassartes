@@ -1,0 +1,98 @@
+---
+import MainLayout from '../../layouts/Layout.astro';
+
+// --- Definición de Tipos para TypeScript ---
+interface Post {
+  id: number;
+  titulo: string;
+  contenido: string;
+  fecha_publicacion: string;
+  nombre_artista: string;
+}
+
+// --- Función para obtener los últimos 10 posts ---
+async function getLatestPosts(): Promise<{
+  posts: Post[];
+  error: string | null;
+}> {
+  try {
+    const apiUrl = import.meta.env.INTERNAL_API_URL;
+    if (!apiUrl) {
+      throw new Error(
+        'La variable de entorno INTERNAL_API_URL no está definida.'
+      );
+    }
+
+    const response = await fetch(`${apiUrl}/api/public/posts/latest`);
+    if (!response.ok) {
+      throw new Error(`Error al obtener los posts: ${response.statusText}`);
+    }
+    const posts = await response.json();
+    return { posts, error: null };
+  } catch (e: any) {
+    console.error('Fallo al obtener los datos de los posts:', e);
+    return { posts: [], error: e.message };
+  }
+}
+
+const { posts, error } = await getLatestPosts();
+---
+
+<MainLayout title="Blog - Últimas Entradas">
+  <div class="container mx-auto px-6 py-16">
+    <div class="text-center mb-16">
+      <h1 class="text-5xl font-extrabold text-white">Noticias</h1>
+      <p class="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
+        Descubre las últimas noticias de nuestras secciones.
+      </p>
+    </div>
+
+    {
+      error && (
+        <div class="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded-lg text-center mb-8">
+          <p>
+            <strong>Error:</strong> No se pudieron cargar las entradas del blog.
+          </p>
+        </div>
+      )
+    }
+
+    <div class="max-w-4xl mx-auto">
+      <div class="space-y-12">
+        {
+          posts.length > 0
+            ? posts.map((post) => (
+                <article class="group">
+                  <a href={`/blog/${post.id}`} class="block">
+                    <p class="text-sm text-gray-400 mb-2">
+                      <time datetime={post.fecha_publicacion}>
+                        {new Date(post.fecha_publicacion).toLocaleDateString(
+                          'es-ES',
+                          { year: 'numeric', month: 'long', day: 'numeric' }
+                        )}
+                      </time>
+                      <span class="mx-2">&middot;</span>
+                      <span>por {post.nombre_artista}</span>
+                    </p>
+                    <h2 class="text-3xl font-bold text-white group-hover:text-primary-400 transition-colors duration-200">
+                      {post.titulo}
+                    </h2>
+                    <p class="text-gray-300 mt-4 line-clamp-3 leading-relaxed">
+                      {post.contenido}
+                    </p>
+                    <div class="mt-4 text-primary-400 font-semibold group-hover:underline">
+                      Leer más &rarr;
+                    </div>
+                  </a>
+                </article>
+              ))
+            : !error && (
+                <p class="text-center text-gray-400">
+                  No hay entradas en el blog por el momento.
+                </p>
+              )
+        }
+      </div>
+    </div>
+  </div>
+</MainLayout>

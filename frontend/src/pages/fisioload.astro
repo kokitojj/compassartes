@@ -1,0 +1,10 @@
+---
+import Layout from '../layouts/Layout.astro';
+import FisioloadPage from '../components/FisioloadPage.jsx';
+---
+
+<Layout title="Fisioload">
+  <main>
+    <FisioloadPage client:only="react" />
+  </main>
+</Layout>

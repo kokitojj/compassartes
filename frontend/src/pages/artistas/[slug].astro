@@ -1,0 +1,167 @@
+---
+import MainLayout from '../../layouts/Layout.astro';
+
+// --- Definición de Tipos para TypeScript ---
+// Esto le dice a TypeScript cómo es la estructura de tus datos.
+interface Obra {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  imagen_url: string;
+}
+
+interface Post {
+  id: number;
+  titulo: string;
+  contenido: string;
+  fecha_publicacion: string;
+}
+
+interface Artista {
+  id: number;
+  nombre_artista: string;
+}
+
+interface ProfileData {
+  artista: Artista;
+  obras: Obra[];
+  blogPosts: Post[];
+}
+
+// --- Función de Obtención de Datos Robusta ---
+async function getProfileData(
+  slug: string | undefined
+): Promise<{ data: ProfileData | null; error: string | null }> {
+  try {
+    const apiUrl = import.meta.env.INTERNAL_API_URL || 'http://backend:3007';
+
+    // PASO DE DEPURACIÓN: Comprueba si la variable de entorno se está leyendo.
+    console.log(`[SSR Fetch] Intentando conectar a la API en: ${apiUrl}`);
+
+    if (!apiUrl) {
+      throw new Error(
+        'La variable de entorno INTERNAL_API_URL no está definida. Revisa el docker-compose.yml.'
+      );
+    }
+
+    // CORRECCIÓN: Usar la variable apiUrl para construir la URL.
+    const response = await fetch(`${apiUrl}/api/public/artistas/${slug}`);
+
+    if (!response.ok) {
+      throw new Error(`El servidor respondió con estado ${response.status}.`);
+    }
+
+    return { data: await response.json(), error: null };
+  } catch (e: any) {
+    console.error('Fallo en la petición fetch:', e);
+    return { data: null, error: e.message };
+  }
+}
+
+// --- Lógica de la Página ---
+const { slug } = Astro.params;
+const { data, error } = await getProfileData(slug);
+
+// CORRECCIÓN: Proporcionamos valores por defecto para obras y blogPosts para evitar errores de tipo.
+const { artista, obras = [], blogPosts = [] } = data || {};
+---
+
+<MainLayout
+  title={artista
+    ? `Perfil de ${artista.nombre_artista}`
+    : 'Artista no encontrado'}
+>
+  <div class="container mx-auto px-6 py-16">
+    {
+      error ? (
+        // --- Bloque de Error ---
+        <div class="text-center py-10 bg-red-900/50 border border-red-500 text-red-300 px-4 rounded-lg">
+          <h1 class="text-3xl font-bold mb-4">Error al Cargar el Perfil</h1>
+          <p class="font-mono bg-gray-900 p-4 rounded">{error}</p>
+        </div>
+      ) : artista ? (
+        // --- Bloque de Éxito ---
+        <>
+          <div class="text-center mb-16">
+            <div class="w-32 h-32 rounded-full bg-primary-500 flex items-center justify-center mb-4 text-5xl font-bold text-white mx-auto">
+              {artista.nombre_artista.charAt(0)}
+            </div>
+            <h1 class="text-5xl font-extrabold text-white">
+              {artista.nombre_artista}
+            </h1>
+          </div>
+
+          <section id="obras">
+            <h2 class="text-4xl font-bold text-white mb-8 border-l-4 border-primary-500 pl-4">
+              Obras de Arte
+            </h2>
+            {obras.length > 0 ? (
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {obras.map(
+                  (
+                    obra: Obra // CORRECCIÓN: Añadido el tipo Obra
+                  ) => (
+                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-700">
+                      <img
+                        src={obra.imagen_url}
+                        alt={obra.titulo}
+                        class="w-full h-64 object-cover"
+                      />
+                      <div class="p-6">
+                        <h3 class="text-xl font-bold text-white mb-2">
+                          {obra.titulo}
+                        </h3>
+                        <p class="text-gray-400 text-sm">{obra.descripcion}</p>
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            ) : (
+              <p class="text-gray-400 bg-gray-800 p-6 rounded-lg border border-gray-700">
+                Este artista aún no ha publicado ninguna obra.
+              </p>
+            )}
+          </section>
+
+          <section id="blog" class="mt-20">
+            <h2 class="text-4xl font-bold text-white mb-8 border-l-4 border-primary-500 pl-4">
+              Entradas del Blog
+            </h2>
+            {blogPosts.length > 0 ? (
+              <div class="space-y-6">
+                {blogPosts.map(
+                  (
+                    post: Post // CORRECCIÓN: Añadido el tipo Post
+                  ) => (
+                    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                      <h3 class="text-2xl font-bold text-white mb-2">
+                        {post.titulo}
+                      </h3>
+                      <p class="text-sm text-gray-500 mb-4">
+                        Publicado el{' '}
+                        {new Date(post.fecha_publicacion).toLocaleDateString()}
+                      </p>
+                      <p class="text-gray-300 whitespace-pre-wrap">
+                        {post.contenido}
+                      </p>
+                    </div>
+                  )
+                )}
+              </div>
+            ) : (
+              <p class="text-gray-400 bg-gray-800 p-6 rounded-lg border border-gray-700">
+                Este artista aún no ha escrito en su blog.
+              </p>
+            )}
+          </section>
+        </>
+      ) : (
+        // --- Bloque de Carga ---
+        <div class="text-center">
+          <h1 class="text-3xl font-bold">Cargando perfil...</h1>
+        </div>
+      )
+    }
+  </div>
+</MainLayout>

@@ -1,0 +1,11 @@
+---
+import MainLayout from '../../layouts/Layout.astro';
+import ArtworkForm from '../../components/ArtworkForm.jsx';
+---
+
+<MainLayout title="Gestionar Obras - CompassArt">
+  <div class="container mx-auto px-6 py-12">
+    <ArtworkForm client:load />
+    <!-- Más adelante, aquí también podrías listar las obras existentes para editarlas/borrarlas -->
+  </div>
+</MainLayout>

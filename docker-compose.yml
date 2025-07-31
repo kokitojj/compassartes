@@ -1,0 +1,66 @@
+services:
+  # Servicio de la Base de Datos (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: angelbfisio-db
+    restart: always
+    environment:
+      POSTGRES_DB: angelbfisio_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD} # <-- Usar una variable de entorno aquí
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d angelbfisio_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "127.0.0.1:5437:5432"
+    networks:
+      - angelbfisio-net
+
+  backend:
+    container_name: angelbfisio-backend
+    build: ./backend
+    restart: always
+    # Expone el puerto del backend al localhost del VPS
+    ports:
+      - "127.0.0.1:3007:3007" # Host_IP:Host_Port:Container_Port
+    env_file:
+      - backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - angelbfisio-net
+
+  # Servicio del Frontend (Astro)
+  frontend:
+    container_name: angelbfisio-frontend
+    build:
+      context: ./frontend
+      args:
+        # INTERNAL_API_URL debe apuntar al nombre del servicio de Docker
+        # ¡IMPORTANTE! Aquí debe ser http://backend:3007 para la comunicación interna de Docker
+        INTERNAL_API_URL: http://backend:3007
+        HOST: 0.0.0.0
+        PORT: 4321
+    restart: always
+    # Expone el puerto del frontend al localhost del VPS
+    ports:
+      - "127.0.0.1:4321:4321" # Host_IP:Host_Port:Container_Port
+    env_file:
+      - frontend/.env
+    depends_on:
+      - backend
+    networks:
+      - angelbfisio-net
+
+volumes:
+  db-data:
+
+networks:
+  angelbfisio-net:
+    driver: bridge

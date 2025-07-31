@@ -1,0 +1,239 @@
+---
+// src/components/Header.astro
+let sections = [];
+try {
+  const response = await fetch('http://backend:3007/api/public/secciones'); // Asume que tu backend corre en localhost:3007
+  if (response.ok) {
+    const rawSections = await response.json();
+    // Mapear los datos para que coincidan con lo esperado en el frontend
+    sections = rawSections.map((section) => ({
+      id: section.id,
+      name: section.nombre_grupo,
+      slug: section.nombre_grupo.toLowerCase().replace(/ /g, '-'), // Generar slug simple
+      imageUrl: section.imagen_url,
+    }));
+  } else {
+    console.error(
+      `Error al cargar secciones: ${response.status} ${response.statusText}`
+    );
+  }
+} catch (error) {
+  console.error('Error al obtener las secciones:', error);
+}
+---
+
+<header
+  class="bg-backblue backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-"
+>
+  <div class="container mx-auto px-6">
+    <nav class="flex justify-between items-center py-4">
+      <!-- Logo -->
+      <a href="/" class="text-3xl font-bold text-white">
+        AngelB<span class="text-indigo-400">fisiorehab</span>
+      </a>
+
+      <!-- Menú de Escritorio -->
+      <div class="hidden md:flex items-center space-x-8">
+        {
+          sections.map((section) => (
+            <a href={`/seccion/${section.id}`} class="nav-link">
+              {section.name}
+            </a>
+          ))
+        }
+
+        <div class="auth-container flex items-center space-x-8">
+          <div class="auth-logged-out">
+            <a href="/login" class="nav-link">Login</a>
+          </div>
+          <div class="auth-logged-in flex items-center space-x-4">
+            <img
+              id="user-avatar-desktop"
+              src="/images/default-avatar.png"
+              alt="Avatar"
+              class="h-8 w-8 rounded-full object-cover"
+            />
+            <span id="user-name-desktop" class="text-white font-medium"></span>
+            <a id="panel-link-desktop" href="#" class="nav-link">Panel</a>
+            <button class="nav-link logout-button">Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón de Menú Hamburguesa -->
+      <button
+        id="mobile-menu-button"
+        class="md:hidden p-2 rounded-md text-gray-300 hover:bg-gray-700 focus:outline-none"
+      >
+        {/* SVG corregido y limpiado para evitar errores de parseo */}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-6 w-6"
+        >
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Menú Móvil Desplegable -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-gray-700">
+    <div class="px-4 pt-2 pb-3 space-y-1 sm:px-5">
+      <!-- <a href="/" class="nav-link block">Inicio</a> -->
+
+      {
+        sections.map((section) => (
+          <a href={`/seccion/${section.id}`} class="nav-link block">
+            {section.name}
+          </a>
+        ))
+      }
+
+      <div class="auth-container space-y-1">
+        <div class="auth-logged-out">
+          <a href="/login" class="nav-link block">Login</a>
+        </div>
+        <div class="auth-logged-in flex items-center space-x-4">
+          <img
+            id="user-avatar-mobile"
+            src="/images/default-avatar.png"
+            alt="Avatar"
+            class="h-8 w-8 rounded-full object-cover"
+          />
+          <span id="user-name-mobile" class="text-white font-medium"></span>
+          <a id="panel-link-mobile" href="#" class="nav-link block">Panel</a>
+          <button class="nav-link block w-full text-left logout-button">
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav-link {
+    @apply text-indigo-400 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors;
+  }
+  .nav-link.active {
+    @apply text-white font-bold;
+  }
+  #mobile-menu .nav-link {
+    @apply block px-3 py-2 rounded-md text-base font-medium;
+  }
+  .auth-logged-in {
+    display: none;
+  }
+  body.user-logged-in .auth-logged-out {
+    display: none;
+  }
+  body.user-logged-in .auth-logged-in {
+    display: flex;
+  }
+  #mobile-menu body.user-logged-in .auth-logged-in {
+    display: block;
+  }
+</style>
+
+<script is:inline data-astro-reload>
+  function setupHeader() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (mobileMenuButton && mobileMenu) {
+      mobileMenuButton.onclick = () => mobileMenu.classList.toggle('hidden');
+    }
+
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.nav-link').forEach((link) => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === currentPath)
+        link.classList.add('active');
+    });
+
+    if (currentPath.startsWith('/artistas'))
+      document
+        .querySelectorAll('a.nav-link[href="/artistas"]')
+        .forEach((el) => el.classList.add('active'));
+    if (currentPath.startsWith('/panel-artista'))
+      document
+        .querySelectorAll('a.nav-link[href="/panel-artista"]')
+        .forEach((el) => el.classList.add('active'));
+    if (currentPath.startsWith('/admin-panel'))
+      document
+        .querySelectorAll('a.nav-link[href="/admin-panel"]')
+        .forEach((el) => el.classList.add('active'));
+    if (currentPath.startsWith('/seccion')) {
+      document
+        .querySelectorAll('a.nav-link[href^="/seccion/"]') // Modificado para que coincida con /seccion/slug
+        .forEach((el) => {
+          if (currentPath.startsWith(el.getAttribute('href'))) {
+            el.classList.add('active');
+          }
+        });
+    }
+
+    const token = localStorage.getItem('angelbfisio-token');
+    const user = JSON.parse(localStorage.getItem('angelbfisio-user') || 'null');
+
+    document.body.classList.remove('user-logged-in'); // Ya no necesitamos user-role-admin en el body
+    if (token && user) {
+      document.body.classList.add('user-logged-in');
+
+      const panelLinkDesktop = document.getElementById('panel-link-desktop');
+      const panelLinkMobile = document.getElementById('panel-link-mobile');
+
+      // Asegúrate de que user.user.role existe antes de acceder a él
+      if (user.user && user.user.role) {
+        console.log('User role:', user.user.role);
+        if (user.user.role === 'admin') {
+          if (panelLinkDesktop) panelLinkDesktop.href = '/admin-panel';
+          if (panelLinkMobile) panelLinkMobile.href = '/admin-panel';
+        } else {
+          // Para 'player' y 'coach' (o cualquier otro rol no admin)
+          if (panelLinkDesktop) panelLinkDesktop.href = '/panel-artista';
+          if (panelLinkMobile) panelLinkMobile.href = '/panel-artista';
+        }
+      }
+
+      // Actualizar nombre de usuario y avatar
+      const userNameDesktop = document.getElementById('user-name-desktop');
+      const userAvatarDesktop = document.getElementById('user-avatar-desktop');
+      const userNameMobile = document.getElementById('user-name-mobile');
+      const userAvatarMobile = document.getElementById('user-avatar-mobile');
+
+      if (userNameDesktop)
+        userNameDesktop.textContent = user.full_name || user.username;
+      if (userNameMobile)
+        userNameMobile.textContent = user.full_name || user.username;
+
+      if (userAvatarDesktop && user.avatar_url)
+        userAvatarDesktop.src = user.avatar_url;
+      if (userAvatarMobile && user.avatar_url)
+        userAvatarMobile.src = user.avatar_url;
+    }
+
+    document.querySelectorAll('.logout-button').forEach((button) => {
+      if (button instanceof HTMLButtonElement) {
+        button.onclick = () => {
+          localStorage.removeItem('angelbfisio-token');
+          localStorage.removeItem('angelbfisio-user');
+          document.body.classList.remove('user-logged-in', 'user-role-admin');
+          window.location.href = '/';
+        };
+      }
+    });
+  }
+  document.addEventListener('astro:page-load', setupHeader);
+  setupHeader();
+</script>

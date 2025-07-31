@@ -1,0 +1,8 @@
+{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "allowSyntheticDefaultImports": true // <-- LA SOLUCIÓN: Permite importar módulos antiguos como si tuvieran un export default.
+  }
+}

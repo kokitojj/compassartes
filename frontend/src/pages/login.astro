@@ -1,0 +1,10 @@
+---
+import MainLayout from '../layouts/Layout.astro'; // Asegúrate que la ruta a tu layout es correcta
+import LoginForm from '../components/LoginForm.jsx';
+---
+
+<MainLayout title="Login - angelbfisio">
+  <div class="container mx-auto px-6 py-16">
+    <LoginForm client:load />
+  </div>
+</MainLayout>

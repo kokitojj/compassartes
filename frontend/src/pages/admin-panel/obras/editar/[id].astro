@@ -1,0 +1,14 @@
+---
+// Esta página es para que el ADMIN edite CUALQUIER obra.
+import MainLayout from '../../../../layouts/Layout.astro';
+import ArtworkEditForm from '../../../../components/ArtworkEditForm.jsx';
+
+// Astro obtiene el ID de la obra desde la URL.
+const { id } = Astro.params;
+---
+
+<MainLayout title="Editar Obra (Admin) - emausorg">
+  <div class="container mx-auto px-6 py-12">
+    <ArtworkEditForm client:load artworkId={id} />
+  </div>
+</MainLayout>

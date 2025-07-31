@@ -1,0 +1,10 @@
+---
+import MainLayout from '../../layouts/Layout.astro';
+import ArtistDashboard from '../../components/ArtistDashboard.jsx';
+---
+
+<MainLayout title="Panel de Artista - CompassArt">
+  <div class="container mx-auto px-6 py-12">
+    <ArtistDashboard client:load />
+  </div>
+</MainLayout>

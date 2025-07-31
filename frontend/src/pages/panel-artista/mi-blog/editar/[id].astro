@@ -1,0 +1,13 @@
+---
+import MainLayout from '../../../../layouts/Layout.astro';
+import BlogPostEditForm from '../../../../components/BlogPostEditForm.jsx';
+
+// Astro obtiene el ID del post desde la URL en cada petición del servidor
+const { id } = Astro.params;
+---
+
+<MainLayout title="Editar Post - CompassArt">
+  <div class="container mx-auto px-6 py-12">
+    <BlogPostEditForm postId={id} client:load />
+  </div>
+</MainLayout>

@@ -1,0 +1,13 @@
+---
+import MainLayout from '../../../../layouts/Layout.astro';
+import ArtworkEditForm from '../../../../components/ArtworkEditForm.jsx';
+
+// Astro obtiene el ID de la obra desde la URL
+const { id } = Astro.params;
+---
+
+<MainLayout title="Editar Obra - CompassArt">
+  <div class="container mx-auto px-6 py-12">
+    <ArtworkEditForm artworkId={id} client:load />
+  </div>
+</MainLayout>

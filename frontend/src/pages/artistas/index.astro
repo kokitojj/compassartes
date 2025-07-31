@@ -1,0 +1,93 @@
+---
+// pages/artistas/index.astro
+
+import MainLayout from '../../layouts/Layout.astro';
+
+// 1. Inicializamos las variables fuera del try...catch
+//    Esto asegura que siempre existan, incluso si el fetch falla.
+let artistas = [];
+let error = null;
+
+try {
+  // Usamos una variable de entorno para la URL del backend (mejor práctica)
+  const backendUrl =
+    import.meta.env.PUBLIC_BACKEND_URL || 'http://backend:3007';
+  const response = await fetch(`${backendUrl}/api/public/artistas`);
+
+  // 2. Verificamos si la respuesta del servidor fue exitosa (ej. 200 OK)
+  //    Un error 404 o 500 no detiene el fetch, pero response.ok será `false`.
+  if (!response.ok) {
+    throw new Error(
+      `Error del servidor: ${response.status} ${response.statusText}`
+    );
+  }
+
+  artistas = await response.json();
+} catch (e) {
+  // 3. Si algo falla (el servidor no responde, la URL es incorrecta, etc.),
+  //    capturamos el error aquí y guardamos un mensaje para mostrarlo.
+  console.error('Error al obtener los artistas:', e.message);
+  error =
+    'No se pudo conectar con el servidor para cargar los artistas. Por favor, asegúrate de que el backend esté funcionando.';
+}
+---
+
+<MainLayout title="Nuestros Artistas - angelbfisio">
+  <div class="flex flex-col min-h-screen">
+    <main class="flex-grow">
+      <!-- Hero Section -->
+      <section class="hero-gradient text-white py-24 px-6">
+        <div class="container mx-auto text-center">
+          <h2 class="text-5xl font-extrabold mb-4 leading-tight">
+            Conoce a los Artistas
+          </h2>
+          <p class="text-xl text-gray-300 text-center max-w-2xl mx-auto mb-12">
+            Una comunidad de creadores que viven el arte como un compromiso
+          </p>
+        </div>
+      </section>
+      {
+        error && (
+          <div
+            class="bg-red-900 border border-red-500 text-red-200 px-4 py-3 rounded-lg text-center"
+            role="alert"
+          >
+            <p class="font-bold">Ocurrió un Problema</p>
+            <p>{error}</p>
+          </div>
+        )
+      }
+
+      {
+        !error && (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 py-6">
+            {artistas.length > 0 ? (
+              artistas.map((artista) => (
+                <a
+                  href={`/artistas/${artista.id}`}
+                  class="block bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-primary-500 hover:bg-gray-700 transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  <div class="flex flex-col items-center text-center">
+                    <div class="w-24 h-24 rounded-full bg-primary-500 flex items-center justify-center mb-4 text-3xl font-bold text-white">
+                      {artista.nombre_artista.charAt(0)}
+                    </div>
+                    <h3 class="text-xl font-bold text-white">
+                      {artista.nombre_artista}
+                    </h3>
+                    <p class="text-sm text-gray-400 mt-1">
+                      Miembro desde {artista.miembro_desde}
+                    </p>
+                  </div>
+                </a>
+              ))
+            ) : (
+              <p class="text-center text-gray-400 col-span-full">
+                Actualmente no hay artistas en la galería.
+              </p>
+            )}
+          </div>
+        )
+      }
+    </main>
+  </div></MainLayout
+>

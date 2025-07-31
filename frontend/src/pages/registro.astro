@@ -1,0 +1,10 @@
+---
+import MainLayout from '../layouts/Layout.astro'; // Asegúrate que la ruta a tu layout es correcta
+import RegistrationForm from '../components/RegistrationForm.jsx';
+---
+
+<MainLayout title="Registro de Autor- angelbfisio">
+  <div class="container mx-auto px-6 py-16">
+    <RegistrationForm client:load />
+  </div>
+</MainLayout>

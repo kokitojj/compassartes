@@ -1,0 +1,151 @@
+---
+import MainLayout from '../../layouts/Layout.astro';
+
+// --- Definición de Tipos para TypeScript ---
+interface Obra {
+  id: number;
+  titulo: string;
+  imagen_url: string;
+  artista_nombre: string;
+}
+
+interface Post {
+  id: number;
+  titulo: string;
+  autor_nombre: string;
+}
+
+interface SeccionData {
+  id: number;
+  nombre_grupo: string;
+  descripcion: string;
+  imagen_url: string;
+  obras: Obra[];
+  posts: Post[];
+}
+
+// --- Función para obtener los datos de la sección ---
+async function getSeccionData(
+  slug: string | undefined
+): Promise<{ data: SeccionData | null; error: string | null }> {
+  try {
+    const apiUrl = import.meta.env.INTERNAL_API_URL || 'http://backend:3007';
+    if (!apiUrl) {
+      throw new Error(
+        'La variable de entorno INTERNAL_API_URL no está definida.'
+      );
+    }
+
+    const response = await fetch(`${apiUrl}/api/public/secciones/${slug}`);
+    if (!response.ok) {
+      throw new Error(
+        `Error al obtener los datos de la sección: ${response.statusText}`
+      );
+    }
+    const data = await response.json();
+    return { data, error: null };
+  } catch (e: any) {
+    console.error('Fallo al obtener los datos de la sección:', e);
+    return { data: null, error: e.message };
+  }
+}
+
+// --- Lógica de la Página ---
+const { slug } = Astro.params;
+const { data, error } = await getSeccionData(slug);
+
+---
+
+<MainLayout title={data ? data.nombre_grupo : 'Sección no encontrada'}>
+  <div class="container mx-auto px-6 py-16">
+    {
+      error && (
+        <div class="text-center py-10 bg-red-900/50 border border-red-500 text-red-300 px-4 rounded-lg">
+          <h1 class="text-3xl font-bold mb-4">Error al Cargar la Sección</h1>
+          <p class="font-mono bg-gray-900 p-4 rounded">{error}</p>
+        </div>
+      )
+    }
+
+    {
+      !error && data && (
+        <>
+          {/* --- Cabecera de la Sección --- */}
+          <div class="relative h-64 md:h-80 rounded-xl overflow-hidden mb-12">
+            <img
+              src={
+                data.imagen_url ||
+                'https://placehold.co/1200x400/1F2937/9CA3AF?text=Seccion'
+              }
+              alt={`Imagen de ${data.nombre_grupo}`}
+              class="w-full h-full object-cover"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+            <div class="absolute bottom-0 left-0 p-6 md:p-8">
+              <h1 class="text-4xl md:text-6xl font-extrabold text-white">
+                {data.nombre_grupo}
+              </h1>
+            </div>
+          </div>
+
+          {/* --- Descripción --- */}
+          <div class="mb-12">
+            <h2 class="text-3xl font-bold text-white mb-4 border-l-4 border-green-500 pl-4">
+              Descripción
+            </h2>
+            <p class="text-gray-300 leading-relaxed whitespace-pre-wrap">
+              {data.descripcion || 'Esta sección no tiene una descripción.'}
+            </p>
+          </div>
+
+          {/* --- Obras Destacadas --- */}
+          <div class="mb-12">
+            <h2 class="text-3xl font-bold text-white mb-4 border-l-4 border-green-500 pl-4">
+              Obras Destacadas
+            </h2>
+            {data.obras.length > 0 ? (
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {data.obras.map((obra) => (
+                  <a href={`/obras/${obra.id}`} class="block bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-primary-500/50 transition-shadow duration-300">
+                    <img src={obra.imagen_url} alt={obra.titulo} class="w-full h-48 object-cover"/>
+                    <div class="p-4">
+                      <h3 class="text-lg font-bold text-white">{obra.titulo}</h3>
+                      <p class="text-sm text-gray-400">por {obra.artista_nombre}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p class="text-gray-400 bg-gray-800 p-4 rounded-lg">
+                No hay obras en esta sección.
+              </p>
+            )}
+          </div>
+
+          {/* --- Últimos Posts --- */}
+          <div>
+            <h2 class="text-3xl font-bold text-white mb-4 border-l-4 border-green-500 pl-4">
+              Últimos Posts
+            </h2>
+            {data.posts.length > 0 ? (
+              <ul class="space-y-4">
+                {data.posts.map((post) => (
+                  <li>
+                    <a href={`/blog/${post.id}`} class="block p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors duration-200">
+                      <h3 class="font-bold text-white text-lg">{post.titulo}</h3>
+                      <p class="text-sm text-gray-400">por {post.autor_nombre}</p>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p class="text-gray-400 bg-gray-800 p-4 rounded-lg">
+                No hay posts en esta sección.
+              </p>
+            )}
+          </div>
+        </>
+      )
+    }
+  </div>
+</MainLayout>
