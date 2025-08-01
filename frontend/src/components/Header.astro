@@ -2,7 +2,8 @@
 // src/components/Header.astro
 let sections = [];
 try {
-  const response = await fetch('http://backend:3007/api/public/secciones'); // Asume que tu backend corre en localhost:3007
+  const apiUrl = import.meta.env.INTERNAL_API_URL;
+  const response = await fetch(`${apiUrl}/api/public/secciones`);
   if (response.ok) {
     const rawSections = await response.json();
     // Mapear los datos para que coincidan con lo esperado en el frontend
