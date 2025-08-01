@@ -43,14 +43,19 @@ services:
       context: ./frontend
       args:
         # INTERNAL_API_URL debe apuntar al nombre del servicio de Docker
-        # ¡IMPORTANTE! Aquí debe ser http://backend:3017 para la comunicación interna de Docker
+        # ¡IMPORTANTE! Aquí debe ser http://backend:3017 para la comunicación i>
         INTERNAL_API_URL: http://backend:3017
         HOST: 0.0.0.0
         PORT: 4317
     restart: always
     # Expone el puerto del frontend al localhost del VPS
     ports:
-      - "127.0.0.1:4317:4317" # Host_IP:Host_Port:Container_Port
+      - "127.0.0.1:4317:4317"
+    # Host_IP:Host_Port:Container_Port
+    environment:
+      PORT: 4317
+      HOST: 0.0.0.0
+      INTERNAL_API_URL: http://backend:3017
     env_file:
       - frontend/.env
     depends_on:
