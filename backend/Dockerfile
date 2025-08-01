@@ -34,7 +34,7 @@ COPY --from=build /usr/src/app/src ./src
 # Si tienes más carpetas de código fuente
 
 # Expone el puerto en el que corre el backend
-EXPOSE 3007
+EXPOSE 3017
 
 # El comando para iniciar el servidor
 CMD [ "node", "server.js" ]

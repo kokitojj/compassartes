@@ -1,5 +1,5 @@
 {
-  "name": "emausorg-backend",
+  "name": "compassart-backend",
   "version": "1.0.0",
   "description": "API para CompassArt",
   "main": "server.js",

@@ -4,7 +4,7 @@ FROM node:18-alpine AS build
 WORKDIR /app
 
 # Declarar argumentos de construcción para variables de entorno
-ARG INTERNAL_API_URL # <-- Asegúrate de que este valor sea http://backend:3007
+ARG INTERNAL_API_URL # <-- Asegúrate de que este valor sea http://backend:3017
 ARG HOST
 ARG PORT
 
@@ -38,7 +38,7 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
 
 # Exponemos el puerto interno en el que corre la aplicación Astro
-EXPOSE 4321
+EXPOSE 4317
 
 # El comando para iniciar el servidor de Astro en producción
 CMD ["node", "dist/server/entry.mjs"]

@@ -16,7 +16,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const publicRoutes = require('./routes/publicRoutes');
 const fisioloadRoutes = require('./routes/fisioloadRoutes');
 const app = express();
-const PORT = process.env.PORT || 3007;
+const PORT = process.env.PORT || 3017;
 
 // --- Middleware ---
 app.use(cors());
@@ -34,7 +34,9 @@ const initializeDatabase = async () => {
     await client.query(`DROP TYPE IF EXISTS session_type;`);
 
     // Creación de un tipo ENUM para los roles de usuario
-    await client.query(`CREATE TYPE user_role AS ENUM ('player', 'coach', 'admin');`);
+    await client.query(
+      `CREATE TYPE user_role AS ENUM ('player', 'coach', 'admin');`
+    );
 
     // Creación de la tabla de users
     await client.query(`
@@ -49,11 +51,20 @@ const initializeDatabase = async () => {
     `);
 
     // Insertar usuario administrador si no existe
-    const adminExists = await client.query('SELECT COUNT(*) FROM users WHERE username = $1', ['admin']);
+    const adminExists = await client.query(
+      'SELECT COUNT(*) FROM users WHERE username = $1',
+      ['admin']
+    );
     if (parseInt(adminExists.rows[0].count, 10) === 0) {
       await client.query(
         'INSERT INTO users (id, username, password_hash, full_name, role) VALUES ($1, $2, $3, $4, $5)',
-        [1, 'admin', '$2a$10$d1zaWyI2blEoBsC6EqSZU.Qhw2tNkvZV0QzrSnJ9sqdMboOZiAC0.', 'Admin Web', 'admin']
+        [
+          1,
+          'admin',
+          '$2a$10$d1zaWyI2blEoBsC6EqSZU.Qhw2tNkvZV0QzrSnJ9sqdMboOZiAC0.',
+          'Admin Web',
+          'admin',
+        ]
       );
       console.log('Usuario administrador insertado.');
     } else {
@@ -61,7 +72,9 @@ const initializeDatabase = async () => {
     }
 
     // Creación de un tipo ENUM para el tipo de sesión
-    await client.query(`CREATE TYPE session_type AS ENUM ('practice', 'game');`);
+    await client.query(
+      `CREATE TYPE session_type AS ENUM ('practice', 'game');`
+    );
 
     // Creación de la tabla para los registros de bienestar (wellness)
     await client.query(`
@@ -193,7 +206,7 @@ const initializeDatabase = async () => {
     } else {
       console.log('Column destacado_portada already exists in "obras" table.');
     }
-    
+
     console.log('Tablas verificadas/creadas correctamente.');
   } catch (err) {
     console.error('Error al inicializar las tablas:', err);
