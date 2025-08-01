@@ -15,7 +15,8 @@ export default function LoginForm() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const apiUrl = import.meta.env.PUBLIC_API_URL;
+      const response = await fetch(`${apiUrl}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,8 +31,8 @@ export default function LoginForm() {
       }
 
       // Guardar el token y los datos del usuario en localStorage
-      localStorage.setItem('angelbfisio-token', data.token);
-      localStorage.setItem('angelbfisio-user', JSON.stringify(data));
+      localStorage.setItem('compassart-token', data.token);
+      localStorage.setItem('compassart-user', JSON.stringify(data));
 
       // Redirigir según el rol del usuario
       if (data.user.role === 'admin') {
@@ -93,9 +94,7 @@ export default function LoginForm() {
             {loading ? 'Ingresando...' : 'Iniciar Sesión'}
           </button>
         </div>
-         <p className="text-center text-gray-400 text-sm mt-6">
-            ¿No tienes una cuenta? <a href="/registro" className="font-bold text-primary-400 hover:text-primary-300">Regístrate aquí</a>.
-        </p>
+         
       </form>
     </div>
   );

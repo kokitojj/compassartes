@@ -23,7 +23,7 @@ export default function GroupManagementDashboard({ initialGroups, onDataChange }
   const uploadToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', 'angelbfisio_unsigned'); 
+    formData.append('upload_preset', 'compassart_unsigned'); 
     const cloudName = 'dgsiqywat'; 
     const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
@@ -44,7 +44,7 @@ export default function GroupManagementDashboard({ initialGroups, onDataChange }
     e.preventDefault();
     setError('');
     setIsUploading(true);
-    const userInfo = JSON.parse(localStorage.getItem('angelbfisio-user'));
+    const userInfo = JSON.parse(localStorage.getItem('compassart-user'));
     const token = userInfo ? userInfo.token : null;
     
     let groupData = { ...currentGroup };
@@ -95,7 +95,7 @@ export default function GroupManagementDashboard({ initialGroups, onDataChange }
   const handleDelete = async () => {
     if (!groupToDelete) return;
     setError('');
-    const userInfo = JSON.parse(localStorage.getItem('angelbfisio-user'));
+    const userInfo = JSON.parse(localStorage.getItem('compassart-user'));
     const token = userInfo ? userInfo.token : null;
     try {
       const response = await fetch(`/api/admin/secciones/${groupToDelete.id}`, {

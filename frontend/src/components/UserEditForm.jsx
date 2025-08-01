@@ -11,7 +11,7 @@ const UserEditForm = ({ userId, onSave, onCancel }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem('angelbfisio-user') || '{}');
+    const userInfo = JSON.parse(localStorage.getItem('compassart-user') || '{}');
     const token = userInfo.token;
 
     if (userId) {
@@ -50,7 +50,7 @@ const UserEditForm = ({ userId, onSave, onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const userInfo = JSON.parse(localStorage.getItem('angelbfisio-user') || '{}');
+    const userInfo = JSON.parse(localStorage.getItem('compassart-user') || '{}');
     const token = userInfo.token;
     const headers = { 'Authorization': `Bearer ${token}` };
 

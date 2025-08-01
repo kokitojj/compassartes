@@ -34,7 +34,7 @@ export default function BlogPostForm({ onPostCreated }) {
         setError('');
         setSuccess('');
 
-        const userInfo = JSON.parse(localStorage.getItem('angelbfisio-user'));
+        const userInfo = JSON.parse(localStorage.getItem('compassart-user'));
         const token = userInfo ? userInfo.token : null;
 
         if (!token) {

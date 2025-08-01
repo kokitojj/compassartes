@@ -57,7 +57,7 @@ export default function ArtworkEditForm({ artworkId }) {
   const uploadToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', 'angelbfisio_unsigned'); // Reemplaza con tu upload preset
+    formData.append('upload_preset', 'compassart_unsigned'); // Reemplaza con tu upload preset
     const cloudName = 'dgsiqywat'; // Reemplaza con tu cloud name
     const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
@@ -71,7 +71,7 @@ export default function ArtworkEditForm({ artworkId }) {
     e.preventDefault();
     setIsSaving(true);
     setError('');
-    const token = localStorage.getItem('angelbfisio-token');
+    const token = localStorage.getItem('compassart-token');
 
     let finalImageUrl = artwork.imagen_url;
 
@@ -103,7 +103,7 @@ export default function ArtworkEditForm({ artworkId }) {
       }
 
       alert('¡Obra actualizada con éxito!');
-      const userInfo = JSON.parse(localStorage.getItem('angelbfisio-user') || '{}');
+      const userInfo = JSON.parse(localStorage.getItem('compassart-user') || '{}');
       if (userInfo.user && userInfo.user.role === 'admin') {
         window.location.href = '/admin-panel';
       } else {

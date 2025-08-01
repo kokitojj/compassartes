@@ -24,8 +24,8 @@ const Fisioload = () => {
     const [userInfo, setUserInfo] = useState(null);
 
     useEffect(() => {
-        const userInfoFromStorage = localStorage.getItem('angelbfisio-user')
-            ? JSON.parse(localStorage.getItem('angelbfisio-user'))
+        const userInfoFromStorage = localStorage.getItem('compassart-user')
+            ? JSON.parse(localStorage.getItem('compassart-user'))
             : null;
         setUserInfo(userInfoFromStorage);
         console.log("UserInfo from localStorage:", userInfoFromStorage);

@@ -9,6 +9,8 @@ import BlogPostForm from './BlogPostForm.jsx'; // <-- AÑADIDO
 import WellnessStats from './WellnessStats.jsx'; // <-- AÑADIDO
 import UserList from './UserList.jsx'; // <-- AÑADIDO
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 // --- Componente Principal del Dashboard Unificado ---
 export default function UnifiedAdminDashboard() {
     // Estado para la vista activa
@@ -30,7 +32,7 @@ export default function UnifiedAdminDashboard() {
     const fetchData = useCallback(async () => {
         setLoading(true);
         setError('');
-        const userInfo = JSON.parse(localStorage.getItem('angelbfisio-user') || '{}');
+        const userInfo = JSON.parse(localStorage.getItem('compassart-user') || '{}');
         const token = userInfo.token;
         if (!token) {
             setError("No se encontró el token de autenticación.");
@@ -42,10 +44,10 @@ export default function UnifiedAdminDashboard() {
         try {
             // ACTUALIZADO: Se añade la petición de secciones
             const [statsRes, usersRes, contentRes, groupsRes] = await Promise.all([
-                fetch('/api/admin/dashboard-stats', { headers }),
-                fetch('/api/admin/users', { headers }),
-                fetch('/api/admin/all-content', { headers }),
-                fetch('/api/public/secciones', { headers }) // Se usa la ruta pública para obtener la lista
+                fetch(`${apiUrl}/api/admin/dashboard-stats`, { headers }),
+                fetch(`${apiUrl}/api/admin/users`, { headers }),
+                fetch(`${apiUrl}/api/admin/all-content`, { headers }),
+                fetch(`${apiUrl}/api/public/secciones`, { headers }) // Se usa la ruta pública para obtener la lista
             ]);
 
             if (!statsRes.ok || !usersRes.ok || !contentRes.ok || !groupsRes.ok) {
@@ -67,7 +69,7 @@ export default function UnifiedAdminDashboard() {
     }, []);
 
     useEffect(() => {
-        const adminUser = JSON.parse(localStorage.getItem('angelbfisio-user') || '{}');
+        const adminUser = JSON.parse(localStorage.getItem('compassart-user') || '{}');
         console.log('adminUser en UnifiedAdminDashboard:', adminUser);
         console.log('adminUser.user.role en UnifiedAdminDashboard:', adminUser.user.role);
         if (adminUser.user.role !== 'admin') {
@@ -80,9 +82,9 @@ export default function UnifiedAdminDashboard() {
 
     // --- Funciones de Gestión (sin cambios) ---
     const handleRoleChange = async (userId, newRole) => {
-        const token = localStorage.getItem('angelbfisio-token');
+        const token = localStorage.getItem('compassart-token');
         try {
-            const response = await fetch(`/api/admin/users/${userId}/role`, {
+            const response = await fetch(`${apiUrl}/api/admin/users/${userId}/role`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ role: newRole }),
@@ -94,9 +96,9 @@ export default function UnifiedAdminDashboard() {
 
     const handleDelete = async (type, id) => {
         if (!confirm('¿Estás seguro? Esta acción es irreversible.')) return;
-        const userInfo = JSON.parse(localStorage.getItem('angelbfisio-user'));
+        const userInfo = JSON.parse(localStorage.getItem('compassart-user'));
         const token = userInfo ? userInfo.token : null;
-        const url = `/api/admin/${type}s/${id}`;
+        const url = `${apiUrl}/api/admin/${type}s/${id}`;
         try {
             const response = await fetch(url, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
             if (!response.ok) throw new Error(`No se pudo borrar el elemento.`);
@@ -107,9 +109,9 @@ export default function UnifiedAdminDashboard() {
 
     const handleDeleteUser = async (userId) => {
         if (!confirm('¿Borrar este usuario? Todas sus destacados y posts serán eliminados.')) return;
-        const token = localStorage.getItem('angelbfisio-token');
+        const token = localStorage.getItem('compassart-token');
         try {
-            const response = await fetch(`/api/admin/users/${userId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+            const response = await fetch(`${apiUrl}/api/admin/users/${userId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
             if (!response.ok) throw new Error('No se pudo borrar el usuario.');
             setUsers(users.filter(u => u.id !== userId));
         } catch (err) { alert(`Error: ${err.message}`); }

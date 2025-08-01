@@ -9,7 +9,7 @@ const UserList = () => {
   const [error, setError] = useState('');
 
   const fetchUsers = async () => {
-    const userInfo = JSON.parse(localStorage.getItem('angelbfisio-user') || '{}');
+    const userInfo = JSON.parse(localStorage.getItem('compassart-user') || '{}');
     const token = userInfo.token;
     if (!token) {
         setError("No se encontró el token de autenticación.");
@@ -32,7 +32,7 @@ const UserList = () => {
 
   const deleteUserHandler = async (id) => {
     if (window.confirm('¿Estás seguro de que quieres borrar este usuario?')) {
-      const userInfo = JSON.parse(localStorage.getItem('angelbfisio-user') || '{}');
+      const userInfo = JSON.parse(localStorage.getItem('compassart-user') || '{}');
       const token = userInfo.token;
       try {
         await axios.delete(`/api/admin/users/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });

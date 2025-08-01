@@ -56,7 +56,7 @@ export default function ArtistDashboard() {
     const fetchData = useCallback(async () => {
         setLoading(true);
         setError('');
-        const token = localStorage.getItem('angelbfisio-token');
+        const token = localStorage.getItem('compassart-token');
         try {
             const headers = { 'Authorization': `Bearer ${token}` };
             const [artworksRes, blogPostsRes] = await Promise.all([
@@ -76,8 +76,8 @@ export default function ArtistDashboard() {
     }, []);
 
     useEffect(() => {
-        const token = localStorage.getItem('angelbfisio-token');
-        const userData = JSON.parse(localStorage.getItem('angelbfisio-user') || 'null');
+        const token = localStorage.getItem('compassart-token');
+        const userData = JSON.parse(localStorage.getItem('compassart-user') || 'null');
         if (!token || !userData) {
             window.location.href = '/login';
             return;
@@ -98,8 +98,8 @@ export default function ArtistDashboard() {
         }
         setDeletingId(id);
         setError('');
-        const token = localStorage.getItem('angelbfisio-token');
-        const url = type === 'obra' ? `http://localhost:3007/api/obras/${id}` : `http://localhost:3007/api/blog/${id}`;
+        const token = localStorage.getItem('compassart-token');
+        const url = type === 'obra' ? `http://localhost:/api/obras/${id}` : `http://localhost:3017/api/blog/${id}`;
         try {
             const response = await fetch(url, {
                 method: 'DELETE',
@@ -122,8 +122,8 @@ export default function ArtistDashboard() {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('angelbfisio-token');
-        localStorage.removeItem('angelbfisio-user');
+        localStorage.removeItem('compassart-token');
+        localStorage.removeItem('compassart-user');
         window.location.href = '/';
     };
 

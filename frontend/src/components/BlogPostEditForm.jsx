@@ -52,8 +52,8 @@ export default function BlogPostEditForm({ postId }) {
         setError('');
         setSuccess('');
 
-        const token = localStorage.getItem('angelbfisio-token');
-        const user = JSON.parse(localStorage.getItem('angelbfisio-user') || '{}');
+        const token = localStorage.getItem('compassart-token');
+        const user = JSON.parse(localStorage.getItem('compassart-user') || '{}');
         if (!token) {
             setError('Sesión expirada. Por favor, inicia sesión de nuevo.');
             setLoading(false);
@@ -98,7 +98,7 @@ export default function BlogPostEditForm({ postId }) {
              <div className="max-w-2xl mx-auto bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-700 text-center">
                 <h2 className="text-2xl font-bold text-red-400 mb-4">Error al Cargar</h2>
                 <p className="bg-red-900/50 text-red-300 p-3 rounded-md text-sm mb-4">{error}</p>
-                <a href={JSON.parse(localStorage.getItem('angelbfisio-user') || '{}').rol === 'ADMIN' ? '/admin-panel' : '/panel-artista'} className="text-primary hover:text-white text-sm mt-4">Volver al Panel</a>
+                <a href={JSON.parse(localStorage.getItem('compassart-user') || '{}').rol === 'ADMIN' ? '/admin-panel' : '/panel-artista'} className="text-primary hover:text-white text-sm mt-4">Volver al Panel</a>
              </div>
         )
     }
@@ -132,7 +132,7 @@ export default function BlogPostEditForm({ postId }) {
                     <button type="submit" disabled={loading} className="bg-primary hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 disabled:bg-primary-400 disabled:cursor-not-allowed">
                         {loading ? 'Guardando...' : 'Guardar Cambios'}
                     </button>
-                    <a href={JSON.parse(localStorage.getItem('angelbfisio-user') || '{}').rol === 'ADMIN' ? '/admin-panel' : '/panel-artista'} className="text-gray-400 hover:text-white text-sm">Volver al Panel</a>
+                    <a href={JSON.parse(localStorage.getItem('compassart-user') || '{}').rol === 'ADMIN' ? '/admin-panel' : '/panel-artista'} className="text-gray-400 hover:text-white text-sm">Volver al Panel</a>
                 </div>
             </form>
         </div>

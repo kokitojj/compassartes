@@ -25,10 +25,12 @@ async function getFeaturedArtworks(): Promise<{
   error: string | null;
 }> {
   try {
-    const apiUrl = import.meta.env.INTERNAL_API_URL || 'http://backend:3007';
+    const apiUrl = import.meta.env.INTERNAL_API_URL || 'http://backend:3017';
     const response = await fetch(`${apiUrl}/api/public/obras/destacadas`);
     if (!response.ok) {
-      throw new Error(`Error al obtener las obras destacadas: ${response.statusText}`);
+      throw new Error(
+        `Error al obtener las obras destacadas: ${response.statusText}`
+      );
     }
     const artworks = await response.json();
     return { artworks, error: null };
@@ -44,7 +46,7 @@ async function getLatestPosts(): Promise<{
   error: string | null;
 }> {
   try {
-    const apiUrl = import.meta.env.INTERNAL_API_URL || 'http://backend:3007';
+    const apiUrl = import.meta.env.INTERNAL_API_URL || 'http://backend:3017';
     console.log('[getLatestPosts] API URL (SSR):', apiUrl); // <-- LOG AÑADIDO
     if (!apiUrl) {
       throw new Error(
@@ -83,11 +85,9 @@ const { artworks, error: artworksError } = await getFeaturedArtworks();
       <!-- Hero Section -->
       <section class="hero-gradient text-white py-24 px-6">
         <div class="container mx-auto text-center">
-          <h2 class="text-5xl font-extrabold mb-4 leading-tight">
-            Angel Bravo
-          </h2>
+          <h2 class="text-5xl font-extrabold mb-4 leading-tight">CompassArt</h2>
 
-          <p>Fisioterapia y más</p>
+          <p>Un espacio para la creatividad</p>
           <!-- <a href="#services" class="cta-button">Descubre Cómo</a> -->
         </div>
       </section>
