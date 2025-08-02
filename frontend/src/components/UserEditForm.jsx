@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const UserEditForm = ({ userId, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
     full_name: '',
@@ -17,7 +19,7 @@ const UserEditForm = ({ userId, onSave, onCancel }) => {
     if (userId) {
       const fetchUser = async () => {
         try {
-          const { data } = await axios.get(`/api/admin/users/${userId}`, { 
+          const { data } = await axios.get(`${apiUrl}/api/admin/users/${userId}`, { 
             headers: { 'Authorization': `Bearer ${token}` }
           });
           setFormData({
@@ -62,9 +64,9 @@ const UserEditForm = ({ userId, onSave, onCancel }) => {
 
     try {
       if (userId) {
-        await axios.put(`/api/admin/users/${userId}`, dataToSend, { headers });
+        await axios.put(`${apiUrl}/api/admin/users/${userId}`, dataToSend, { headers });
       } else {
-        await axios.post('/api/admin/users', dataToSend, { headers });
+        await axios.post(`${apiUrl}/api/admin/users`, dataToSend, { headers });
       }
       onSave();
     } catch (error) {
