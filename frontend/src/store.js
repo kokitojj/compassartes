@@ -29,8 +29,8 @@ const reducer = combineReducers({
 });
 
 const userInfoFromStorage =
-  typeof window !== 'undefined' && localStorage.getItem('angelbfisio-user')
-    ? JSON.parse(localStorage.getItem('angelbfisio-user'))
+  typeof window !== 'undefined' && localStorage.getItem('compassar-user')
+    ? JSON.parse(localStorage.getItem('compassar-user'))
     : null;
 
 const initialState = {

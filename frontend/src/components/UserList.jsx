@@ -1,42 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import UserEditForm from './UserEditForm'; // Asumimos que este también será estilizado con Tailwind
+import UserEditForm from './UserEditForm';
 
-const UserList = () => {
-  const [users, setUsers] = useState([]);
-  const [editingUser, setEditingUser] = useState(null); // ID del usuario a editar
+const apiUrl = import.meta.env.VITE_API_URL;
+
+const UserList = ({ users, onUserDeleted, onUserUpdated }) => {
+  const [editingUser, setEditingUser] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState('');
-
-  const fetchUsers = async () => {
-    const userInfo = JSON.parse(localStorage.getItem('compassart-user') || '{}');
-    const token = userInfo.token;
-    if (!token) {
-        setError("No se encontró el token de autenticación.");
-        return;
-    }
-    const headers = { 'Authorization': `Bearer ${token}` };
-
-    try {
-      const { data } = await axios.get('/api/admin/users', { headers });
-      setUsers(data);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      setError('No se pudieron cargar los usuarios.');
-    }
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
 
   const deleteUserHandler = async (id) => {
     if (window.confirm('¿Estás seguro de que quieres borrar este usuario?')) {
       const userInfo = JSON.parse(localStorage.getItem('compassart-user') || '{}');
       const token = userInfo.token;
       try {
-        await axios.delete(`/api/admin/users/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
-        setUsers(users.filter((user) => user.id !== id));
+        await axios.delete(`${apiUrl}/api/admin/users/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        onUserDeleted(id);
       } catch (error) {
         console.error('Error deleting user:', error);
         setError('No se pudo borrar el usuario.');
@@ -47,7 +26,7 @@ const UserList = () => {
   const handleSave = () => {
     setEditingUser(null);
     setIsCreating(false);
-    fetchUsers(); // Recargar la lista de usuarios después de guardar
+    onUserUpdated();
   };
 
   const handleCancel = () => {
@@ -57,12 +36,12 @@ const UserList = () => {
 
   const handleEdit = (user) => {
     setEditingUser(user.id);
-    setIsCreating(false); // No se puede estar creando y editando a la vez
+    setIsCreating(false);
   }
 
   const handleCreate = () => {
     setIsCreating(true);
-    setEditingUser(null); // No se puede estar creando y editando a la vez
+    setEditingUser(null);
   }
 
   return (

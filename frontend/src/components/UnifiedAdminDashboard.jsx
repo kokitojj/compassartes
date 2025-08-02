@@ -139,7 +139,7 @@ export default function UnifiedAdminDashboard() {
                     </div>
                 );
             case 'users':
-                return <UserList />;
+                return <UserList users={users} onUserDeleted={handleDeleteUser} onUserUpdated={fetchData} />;
             case 'artworks':
                 return (
                     <div>

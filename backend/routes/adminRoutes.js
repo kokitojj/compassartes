@@ -11,6 +11,20 @@ const router = express.Router();
 
 // User Management
 router.post('/users', adminAuth, createUser);
+
+// --- GET /api/admin/users - Listar todos los users ---
+router.get('/users', adminAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, full_name, username, role, to_char(created_at, 'YYYY-MM-DD') as created_at FROM users ORDER BY id ASC"
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al obtener users:', err);
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});
+
 router.get('/users/:id', adminAuth, getUserById);
 router.put('/users/:id', adminAuth, updateUser);
 
@@ -100,19 +114,6 @@ router.delete('/posts/:id', adminAuth, async (req, res) => {
     res.status(204).send();
   } catch (err) {
     res.status(500).json({ error: 'Error al borrar el post.' });
-  }
-});
-
-// --- GET /api/admin/users - Listar todos los users ---
-router.get('/users', adminAuth, async (req, res) => {
-  try {
-    const result = await pool.query(
-      "SELECT id, full_name, username, role, to_char(created_at, 'YYYY-MM-DD') as created_at FROM users ORDER BY id ASC"
-    );
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error al obtener users:', err);
-    res.status(500).json({ error: 'Error interno del servidor.' });
   }
 });
 
