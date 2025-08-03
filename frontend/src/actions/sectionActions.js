@@ -21,7 +21,7 @@ export const listSections = () => async (dispatch) => {
   try {
     dispatch({ type: SECTION_LIST_REQUEST });
 
-    const { data } = await axios.get('/api/sections');
+    const { data } = await axios.get('/api/public/all-secciones');
 
     dispatch({ type: SECTION_LIST_SUCCESS, payload: data });
   } catch (error) {

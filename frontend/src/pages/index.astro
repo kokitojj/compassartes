@@ -25,14 +25,21 @@ async function getFeaturedArtworks(): Promise<{
   error: string | null;
 }> {
   try {
-    const apiUrl = import.meta.env.INTERNAL_API_URL || 'http://backend:3017';
+    const apiUrl = 'http://backend:3017';
+    console.log('[getFeaturedArtworks] API URL (SSR):', apiUrl); // <-- LOG AÑADIDO
     const response = await fetch(`${apiUrl}/api/public/obras/destacadas`);
     if (!response.ok) {
+      console.error(
+        '[getFeaturedArtworks] Error response (SSR):',
+        response.status,
+        response.statusText
+      ); // <-- LOG AÑADIDO
       throw new Error(
         `Error al obtener las obras destacadas: ${response.statusText}`
       );
     }
     const artworks = await response.json();
+    console.log('[getFeaturedArtworks] Artworks fetched (SSR):', artworks.length); // <-- LOG AÑADIDO
     return { artworks, error: null };
   } catch (e: any) {
     console.error('Fallo al obtener los datos de las obras destacadas:', e);
@@ -46,7 +53,7 @@ async function getLatestPosts(): Promise<{
   error: string | null;
 }> {
   try {
-    const apiUrl = import.meta.env.INTERNAL_API_URL || 'http://backend:3017';
+    const apiUrl = 'http://backend:3017';
     console.log('[getLatestPosts] API URL (SSR):', apiUrl); // <-- LOG AÑADIDO
     if (!apiUrl) {
       throw new Error(

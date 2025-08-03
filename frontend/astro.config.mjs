@@ -22,9 +22,6 @@ export default defineConfig({
   integrations: [tailwind(), react()],
   base: '/',
   vite: {
-    define: {
-      'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'http://localhost:3017')
-    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src').replace(/\\/g, '/'),

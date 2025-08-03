@@ -9,6 +9,6 @@ const { id } = Astro.params;
 
 <MainLayout title="Editar Obra (Admin) - emausorg">
   <div class="container mx-auto px-6 py-12">
-    <ArtworkEditForm client:load artworkId={id} />
+    <ArtworkEditForm client:only artworkId={id} />
   </div>
 </MainLayout>

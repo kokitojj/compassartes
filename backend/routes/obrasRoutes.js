@@ -76,7 +76,10 @@ router.put('/:id', authenticateToken, async (req, res) => {
     ]);
     if (obraResult.rows.length === 0)
       return res.status(404).json({ error: 'Obra no encontrada.' });
-    if (obraResult.rows[0].artista_id !== artista_id)
+    console.log('req.user.id:', req.user.id);
+    console.log('req.user.role:', req.user.role);
+    console.log('obraResult.rows[0].artista_id:', obraResult.rows[0].artista_id);
+    if (obraResult.rows[0].artista_id !== artista_id && req.user.role !== 'admin')
       return res
         .status(403)
         .json({ error: 'No autorizado para modificar esta obra.' });
@@ -105,7 +108,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     ]);
     if (obraResult.rows.length === 0)
       return res.status(404).json({ error: 'Obra no encontrada.' });
-    if (obraResult.rows[0].artista_id !== artista_id)
+    if (obraResult.rows[0].artista_id !== artista_id && req.user.role !== 'admin')
       return res.status(403).json({ error: 'No autorizado.' });
 
     // Opcional: Borrar la imagen de Cloudinary

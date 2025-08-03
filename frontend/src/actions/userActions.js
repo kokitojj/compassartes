@@ -9,7 +9,7 @@ import {
   USER_REGISTER_FAIL,
 } from '../constants/userConstants';
 
-export const login = (username, password) => async (dispatch) => {
+export const login = (username, password, apiUrl) => async (dispatch) => {
   try {
     dispatch({ type: USER_LOGIN_REQUEST });
 
@@ -20,7 +20,7 @@ export const login = (username, password) => async (dispatch) => {
     };
 
     const { data } = await axios.post(
-      '/api/auth/login',
+      `${apiUrl}/api/auth/login`,
       { username, password },
       config
     );
@@ -28,7 +28,7 @@ export const login = (username, password) => async (dispatch) => {
 
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
 
-    localStorage.setItem('angelbfisio-user', JSON.stringify(data));
+    localStorage.setItem('compassart-user', JSON.stringify(data));
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,
@@ -45,7 +45,7 @@ export const logout = () => (dispatch) => {
   dispatch({ type: USER_LOGOUT });
 };
 
-export const register = (username, password, full_name) => async (dispatch) => {
+export const register = (username, password, full_name, apiUrl) => async (dispatch) => {
   try {
     dispatch({ type: USER_REGISTER_REQUEST });
 
@@ -56,7 +56,7 @@ export const register = (username, password, full_name) => async (dispatch) => {
     };
 
     const { data } = await axios.post(
-      '/api/auth/register',
+      `${apiUrl}/api/auth/register`,
       { username, password, full_name },
       config
     );
@@ -66,7 +66,7 @@ export const register = (username, password, full_name) => async (dispatch) => {
 
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
 
-    localStorage.setItem('angelbfisio-user', JSON.stringify(data));
+    localStorage.setItem('compassart-user', JSON.stringify(data));
   } catch (error) {
     dispatch({
       type: USER_REGISTER_FAIL,

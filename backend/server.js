@@ -233,8 +233,8 @@ const startServer = async () => {
     configureCloudinary();
     // Esperamos a que la DB esté lista ANTES de iniciar el servidor.
     await initializeDatabase();
-    app.listen(PORT, () => {
-      console.log(`Servidor API de angelbfisio corriendo en el puerto ${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Servidor API Compassart corriendo en el puerto ${PORT}`);
     });
   } catch (err) {
     console.error('No se pudo iniciar el servidor. Saliendo.', err);

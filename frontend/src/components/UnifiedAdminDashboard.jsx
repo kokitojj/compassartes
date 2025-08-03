@@ -9,7 +9,9 @@ import BlogPostForm from './BlogPostForm.jsx'; // <-- AÑADIDO
 import WellnessStats from './WellnessStats.jsx'; // <-- AÑADIDO
 import UserList from './UserList.jsx'; // <-- AÑADIDO
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = window.PUBLIC_API_URL;
+
+console.log('UnifiedAdminDashboard apiUrl:', apiUrl); // Añadido para depuración
 
 // --- Componente Principal del Dashboard Unificado ---
 export default function UnifiedAdminDashboard() {
@@ -47,7 +49,7 @@ export default function UnifiedAdminDashboard() {
                 fetch(`${apiUrl}/api/admin/dashboard-stats`, { headers }),
                 fetch(`${apiUrl}/api/admin/users`, { headers }),
                 fetch(`${apiUrl}/api/admin/all-content`, { headers }),
-                fetch(`${apiUrl}/api/public/secciones`, { headers }) // Se usa la ruta pública para obtener la lista
+                fetch(`${apiUrl}/api/public/all-secciones`, { headers }),
             ]);
 
             if (!statsRes.ok || !usersRes.ok || !contentRes.ok || !groupsRes.ok) {

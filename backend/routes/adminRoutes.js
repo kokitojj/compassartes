@@ -63,6 +63,19 @@ router.get('/all-content', adminAuth, async (req, res) => {
   }
 });
 
+// --- GET /api/admin/secciones - Listar todas las secciones (para admin) ---
+router.get('/secciones', adminAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, nombre_grupo, descripcion, imagen_url FROM secciones ORDER BY nombre_grupo ASC'
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al obtener las secciones para admin:', err);
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});
+
 // --- UPDATE (Actualizar) ---
 // PUT /api/admin/obras/:id - Admin edita cualquier obra
 router.put('/obras/:id', adminAuth, async (req, res) => {

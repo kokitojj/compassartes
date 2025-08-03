@@ -6,6 +6,19 @@ const router = express.Router();
 // --- GET /api/public/secciones/:slug ---
 router.get('/secciones/:slug', getSectionBySlug);
 
+// --- GET /api/public/all-secciones - Listar todas las secciones ---
+router.get('/all-secciones', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, nombre_grupo, descripcion, imagen_url FROM secciones ORDER BY nombre_grupo ASC'
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al obtener la lista de secciones:', err);
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});
+
 // --- GET /api/public/obras/destacadas ---
 router.get('/obras/destacadas', async (req, res) => {
   try {
@@ -73,18 +86,7 @@ router.get('/artistas/:id', async (req, res) => {
   }
 });
 
-// --- GET /api/public/secciones - Listar todas las secciones ---
-router.get('/secciones', async (req, res) => {
-  try {
-    const result = await pool.query(
-      'SELECT id, nombre_grupo, descripcion, imagen_url FROM secciones ORDER BY nombre_grupo ASC'
-    );
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error al obtener la lista de secciones:', err);
-    res.status(500).json({ error: 'Error interno del servidor.' });
-  }
-});
+
 
 // --- GET /api/public/secciones/:id - Obtener perfil de una sección y sus miembros ---
 router.get('/secciones/:id', async (req, res) => {

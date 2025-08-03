@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export default function ArtworkForm() {
+    const apiUrl = window.PUBLIC_API_URL;
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [file, setFile] = useState(null);
@@ -14,7 +15,7 @@ export default function ArtworkForm() {
     useEffect(() => {
         const fetchSecciones = async () => {
             try {
-                const response = await fetch('/api/public/secciones');
+                const response = await fetch(`${apiUrl}/api/public/all-secciones`);
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'No se pudieron cargar las secciones.');
                 setSecciones(data);
@@ -59,7 +60,7 @@ export default function ArtworkForm() {
         }
 
         try {
-            const response = await fetch('/api/obras', {
+            const response = await fetch(`${apiUrl}/api/obras`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formData,

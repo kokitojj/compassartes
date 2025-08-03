@@ -1,10 +1,22 @@
 ---
-import MainLayout from '../layouts/Layout.astro'; // Asegúrate que la ruta a tu layout es correcta
-import LoginForm from '../components/LoginForm.jsx';
+import MainLayout from '../layouts/Layout.astro';
 ---
 
 <MainLayout title="Login - compassart">
   <div class="container mx-auto px-6 py-16">
-    <LoginForm client:load />
+    <div id="login-form-container"></div>
   </div>
 </MainLayout>
+
+<script>
+  import React from 'react';
+  import ReactDOM from 'react-dom';
+  import ReduxProvider from '../components/ReduxProvider.jsx';
+  import LoginForm from '../components/LoginForm.jsx';
+
+  const container = document.getElementById('login-form-container');
+  ReactDOM.render(
+    React.createElement(ReduxProvider, null, React.createElement(LoginForm, null)),
+    container
+  );
+</script>

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 // El componente ahora acepta 'artworkId' como una prop.
 export default function ArtworkEditForm({ artworkId }) {
   const id = artworkId;
+  const apiUrl = window.PUBLIC_API_URL;
 
   const [artwork, setArtwork] = useState({ titulo: '', descripcion: '', imagen_url: '', seccion_id: '', destacado_portada: false });
   const [secciones, setSecciones] = useState([]);
@@ -15,8 +16,8 @@ export default function ArtworkEditForm({ artworkId }) {
     const fetchArtworkAndSecciones = async () => {
       try {
         const [artworkRes, seccionesRes] = await Promise.all([
-          fetch(`/api/obras/${id}`),
-          fetch('/api/public/secciones')
+          fetch(`${apiUrl}/api/obras/${id}`),
+          fetch(`${apiUrl}/api/public/all-secciones`)
         ]);
 
         if (!artworkRes.ok) {
@@ -71,7 +72,8 @@ export default function ArtworkEditForm({ artworkId }) {
     e.preventDefault();
     setIsSaving(true);
     setError('');
-    const token = localStorage.getItem('compassart-token');
+    const userInfo = JSON.parse(localStorage.getItem('compassart-user') || '{}');
+    const token = userInfo.token;
 
     let finalImageUrl = artwork.imagen_url;
 
@@ -88,7 +90,7 @@ export default function ArtworkEditForm({ artworkId }) {
         destacado_portada: artwork.destacado_portada,
       };
 
-      const response = await fetch(`/api/obras/${id}`, {
+      const response = await fetch(`${apiUrl}/api/obras/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

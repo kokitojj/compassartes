@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export default function BlogPostForm({ onPostCreated }) {
+    const apiUrl = window.PUBLIC_API_URL;
     const [titulo, setTitulo] = useState('');
     const [contenido, setContenido] = useState('');
     const [seccionId, setSeccionId] = useState('');
@@ -12,7 +13,7 @@ export default function BlogPostForm({ onPostCreated }) {
     useEffect(() => {
         const fetchSecciones = async () => {
             try {
-                const response = await fetch('/api/public/secciones');
+                const response = await fetch(`${apiUrl}/api/public/all-secciones`);
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'No se pudieron cargar las secciones.');
                 setSecciones(data);
@@ -49,7 +50,7 @@ export default function BlogPostForm({ onPostCreated }) {
         }
 
         try {
-            const response = await fetch('/api/blog', {
+            const response = await fetch(`${apiUrl}/api/blog`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

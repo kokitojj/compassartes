@@ -20,6 +20,10 @@ const { title, userRole } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
 
+    <script is:inline>
+      window.PUBLIC_API_URL = "http://localhost:3017";
+    </script>
+
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

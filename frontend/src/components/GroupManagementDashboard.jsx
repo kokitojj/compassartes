@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 // ACTUALIZADO: El componente ahora recibe props
 export default function GroupManagementDashboard({ initialGroups, onDataChange }) {
+  const apiUrl = window.PUBLIC_API_URL;
+  console.log('GroupManagementDashboard apiUrl:', apiUrl); // Añadido para depuración
   // El estado interno se inicializa y actualiza desde las props
   const [groups, setGroups] = useState(initialGroups || []);
   const [error, setError] = useState('');
@@ -56,8 +58,8 @@ export default function GroupManagementDashboard({ initialGroups, onDataChange }
       }
 
       const url = isEditing 
-        ? `/api/admin/secciones/${groupData.id}` 
-        : '/api/admin/secciones';
+        ? `${apiUrl}/api/admin/secciones/${groupData.id}` 
+        : `${apiUrl}/api/admin/secciones`;
         
       const method = isEditing ? 'PUT' : 'POST';
 
@@ -98,7 +100,7 @@ export default function GroupManagementDashboard({ initialGroups, onDataChange }
     const userInfo = JSON.parse(localStorage.getItem('compassart-user'));
     const token = userInfo ? userInfo.token : null;
     try {
-      const response = await fetch(`/api/admin/secciones/${groupToDelete.id}`, {
+      const response = await fetch(`${apiUrl}/api/admin/secciones/${groupToDelete.id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` },
       });
@@ -248,3 +250,4 @@ export default function GroupManagementDashboard({ initialGroups, onDataChange }
     </div>
   );
 }
+

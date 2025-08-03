@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export default function BlogPostEditForm({ postId }) {
+    const apiUrl = import.meta.env.VITE_API_URL; // Añadido
     const [formData, setFormData] = useState({ titulo: '', contenido: '', seccion_id: '' });
     const [secciones, setSecciones] = useState([]);
     const [error, setError] = useState('');
@@ -12,8 +13,8 @@ export default function BlogPostEditForm({ postId }) {
             setLoading(true);
             try {
                 const [postRes, seccionesRes] = await Promise.all([
-                    fetch(`/api/blog/${postId}`),
-                    fetch('/api/public/secciones')
+                    fetch(`${apiUrl}/api/blog/${postId}`),
+                    fetch(`${apiUrl}/api/public/all-secciones`)
                 ]);
 
                 if (!postRes.ok) {
@@ -62,8 +63,8 @@ export default function BlogPostEditForm({ postId }) {
 
         const isAdmin = user.user && user.user.role === 'admin';
         const url = isAdmin
-            ? `/api/admin/posts/${postId}`
-            : `/api/blog/${postId}`;
+            ? `${apiUrl}/api/admin/posts/${postId}`
+            : `${apiUrl}/api/blog/${postId}`;
 
         try {
             const response = await fetch(url, {
@@ -138,3 +139,4 @@ export default function BlogPostEditForm({ postId }) {
         </div>
     );
 }
+

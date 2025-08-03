@@ -2,7 +2,7 @@
 import MainLayout from '../../layouts/Layout.astro';
 
 // Obtenemos la lista de secciones desde nuestro backend
-const response = await fetch('http://backend:3007/api/public/secciones');
+const response = await fetch('http://backend:3007/api/public/all-secciones');
 const grupos = await response.json();
 ---
 

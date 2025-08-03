@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { login } from '../actions/userActions';
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -15,34 +19,20 @@ export default function LoginForm() {
     setLoading(true);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${apiUrl}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      // Pasa la URL de la API a la acción de login
+      await dispatch(login(formData.username, formData.password, window.PUBLIC_API_URL));
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Algo salió mal.');
-      }
-
-      // Guardar el token y los datos del usuario en localStorage
-      localStorage.setItem('compassart-token', data.token);
-      localStorage.setItem('compassart-user', JSON.stringify(data));
-
-      // Redirigir según el rol del usuario
-      if (data.user.role === 'admin') {
+      // La redirección ahora se maneja dentro de la acción o después de un éxito global
+      // Aquí solo manejamos el éxito de la llamada a la API
+      const userInfo = JSON.parse(localStorage.getItem('compassart-user') || '{}');
+      if (userInfo.user && userInfo.user.role === 'admin') {
         window.location.href = '/admin-panel';
-      } else if (data.user.role === 'coach') {
+      } else if (userInfo.user && userInfo.user.role === 'coach') {
         window.location.href = '/panel-artista';
-      } else if (data.user.role === 'player') {
+      } else if (userInfo.user && userInfo.user.role === 'player') {
         window.location.href = '/fisioload';
       } else {
-        window.location.href = '/fisioload'; // O una página por defecto
+        // No redirigir si no hay un rol definido
       }
 
     } catch (err) {
@@ -99,3 +89,4 @@ export default function LoginForm() {
     </div>
   );
 }
+
