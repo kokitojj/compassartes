@@ -24,7 +24,7 @@ COPY . .
 
 # Construimos la aplicación en modo servidor
 # Pasamos las variables de entorno al comando de construcción
-RUN PUBLIC_API_URL=$PUBLIC_API_URL npm run build
+RUN VITE_PUBLIC_API_URL=$VITE_PUBLIC_API_URL npm run build
 
 # Etapa 2: Producción
 # Usamos una imagen más ligera para ejecutar la aplicación
