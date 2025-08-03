@@ -4,13 +4,13 @@ FROM node:18-alpine AS build
 WORKDIR /app
 
 # Declarar argumentos de construcción para variables de entorno
-ARG INTERNAL_API_URL
+ARG VITE_PUBLIC_INTERNAL_API_URL
 ARG HOST
 ARG PORT
 ARG VITE_PUBLIC_API_URL
 
 # Establecer variables de entorno para el entorno de construcción
-ENV INTERNAL_API_URL=$INTERNAL_API_URL
+ENV VITE_PUBLIC_INTERNAL_API_URL=$VITE_PUBLIC_INTERNAL_API_URL
 ENV HOST=$HOST
 ENV PORT=$PORT
 ENV VITE_PUBLIC_API_URL=$VITE_PUBLIC_API_URL

@@ -88,41 +88,7 @@ router.get('/artistas/:id', async (req, res) => {
 
 
 
-// --- GET /api/public/secciones/:id - Obtener perfil de una sección y sus miembros ---
-router.get('/secciones/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    // 1. Obtener la información de la sección
-    const grupoResult = await pool.query('SELECT * FROM secciones WHERE id = $1', [
-      id,
-    ]);
-    if (grupoResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Sección no encontrada.' });
-    }
-    const grupo = grupoResult.rows[0];
 
-    // 2. Obtener los miembros de la sección
-    const miembrosResult = await pool.query(
-      `
-            SELECT u.id, u.full_name 
-            FROM users u
-            JOIN grupo_miembros gm ON u.id = gm.usuario_id
-            WHERE gm.grupo_id = $1
-            ORDER BY u.full_name ASC
-        `,
-      [id]
-    );
-
-    // 3. Combinar todo en una sola respuesta
-    res.json({
-      seccion: grupo,
-      miembros: miembrosResult.rows,
-    });
-  } catch (err) {
-    console.error('Error al obtener el perfil de la sección:', err);
-    res.status(500).json({ error: 'Error interno del servidor.' });
-  }
-});
 
 // --- GET /api/public/posts/latest ---
 // Devuelve los 10 posts más recientes del blog.

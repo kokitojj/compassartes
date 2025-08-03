@@ -42,7 +42,7 @@ services:
     build:
       context: ./frontend
       args:
-        INTERNAL_API_URL: http://backend:3017
+        VITE_PUBLIC_INTERNAL_API_URL: http://backend:3017
         HOST: 0.0.0.0
         PORT: 4317
         VITE_PUBLIC_API_URL: ${VITE_PUBLIC_API_URL}
@@ -54,7 +54,7 @@ services:
     environment:
       PORT: 4317
       HOST: 0.0.0.0
-      INTERNAL_API_URL: http://backend:3017
+      VITE_PUBLIC_INTERNAL_API_URL: http://backend:3017
       NODE_OPTIONS: --dns-result-order=ipv4first
       VITE_PUBLIC_API_URL: ${VITE_PUBLIC_API_URL}
     env_file:
