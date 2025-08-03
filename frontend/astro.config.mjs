@@ -22,6 +22,7 @@ export default defineConfig({
   integrations: [tailwind(), react()],
   base: '/',
   vite: {
+    envPrefix: 'VITE_',
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src').replace(/\\/g, '/'),

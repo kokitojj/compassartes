@@ -9,7 +9,7 @@ import BlogPostForm from './BlogPostForm.jsx'; // <-- AÑADIDO
 import WellnessStats from './WellnessStats.jsx'; // <-- AÑADIDO
 import UserList from './UserList.jsx'; // <-- AÑADIDO
 
-const apiUrl = window.PUBLIC_API_URL;
+const apiUrl = import.meta.env.VITE_PUBLIC_API_URL;
 
 console.log('UnifiedAdminDashboard apiUrl:', apiUrl); // Añadido para depuración
 

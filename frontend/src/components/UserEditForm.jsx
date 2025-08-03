@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_PUBLIC_API_URL;
 
 const UserEditForm = ({ userId, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -63,14 +63,16 @@ const UserEditForm = ({ userId, onSave, onCancel }) => {
     }
 
     try {
+      const requestUrl = userId ? `${apiUrl}/api/admin/users/${userId}` : `${apiUrl}/api/admin/users`;
+      console.log('UserEditForm: Request URL:', requestUrl);
       if (userId) {
-        await axios.put(`${apiUrl}/api/admin/users/${userId}`, dataToSend, { headers });
+        await axios.put(requestUrl, dataToSend, { headers });
       } else {
-        await axios.post(`${apiUrl}/api/admin/users`, dataToSend, { headers });
+        await axios.post(requestUrl, dataToSend, { headers });
       }
       onSave();
     } catch (error) {
-      console.error('Error saving user:', error);
+      console.error('Error saving user:', error.response || error);
       setError(error.response?.data?.error || 'No se pudo guardar el usuario.');
     }
   };

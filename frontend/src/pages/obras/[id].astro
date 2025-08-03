@@ -19,7 +19,7 @@ async function getObraData(
 ): Promise<{ data: ObraData | null; error: string | null }> {
   console.log('[getObraData] Calling with ID:', id);
   try {
-    const apiUrl = import.meta.env.INTERNAL_API_URL || 'http://backend:3007';
+    const apiUrl = process.env.INTERNAL_API_URL;
     console.log('[getObraData] API URL:', apiUrl);
     if (!apiUrl) {
       throw new Error(
