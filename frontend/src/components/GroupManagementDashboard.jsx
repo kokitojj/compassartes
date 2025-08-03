@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 // ACTUALIZADO: El componente ahora recibe props
 export default function GroupManagementDashboard({ initialGroups, onDataChange }) {
-  const apiUrl = window.PUBLIC_API_URL;
+  const apiUrl = import.meta.env.VITE_PUBLIC_API_URL;
   console.log('GroupManagementDashboard apiUrl:', apiUrl); // Añadido para depuración
   // El estado interno se inicializa y actualiza desde las props
   const [groups, setGroups] = useState(initialGroups || []);
